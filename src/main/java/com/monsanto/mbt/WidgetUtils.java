@@ -2,12 +2,12 @@ package com.monsanto.mbt;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class WidgetUtils {
 
+    private static Scanner sc = new Scanner(System.in);
     public static List<Widget> getSampleWidgets() {
         List<Widget> widgets = new ArrayList<Widget>();
 
@@ -49,5 +49,56 @@ public class WidgetUtils {
             e.printStackTrace();
         }
         return parsedDate;
+    }
+    public static List<Widget> createWidget(List<Widget> myWidgets) {
+        System.out.println("Create Widget");
+        if(myWidgets.size()>10) {
+            System.out.println("Total widget count 10 or above, so new widgets cannot be created");
+            return null;
+        }
+        else {
+            myWidgets.add(generateNewWidget());
+            return myWidgets;
+        }
+    }
+    public static void shipWidget(List<Widget> myWidgets) {
+        System.out.println("Ship Widget");
+        if(myWidgets.size()<1)
+            System.out.println("No widgets found to ship");
+        else {
+            int choice = 0;
+            do {
+                System.out.println("Select the choice\n1. Sort By Color\n2. Sort by Production Date\n3. Exit");
+                choice = sc.nextInt();
+                switch(choice) {
+                    case 1:
+                        sortByColor(myWidgets);
+                        break;
+                    case 2:
+                        sortByProductionDate(myWidgets);
+                        break;
+                    default:
+                        break;
+                }
+            } while(choice!=3);
+        }
+    }
+    public static Widget generateNewWidget() {
+        System.out.println("Enter serial no, color, createdDate");
+        int serialNo = sc.nextInt();
+        sc.nextLine();
+        String color = sc.nextLine();
+        Date productionDate = WidgetUtils.stringToDateConverter(sc.nextLine());
+        return new Widget(serialNo, color, productionDate);
+    }
+    public static void sortByColor(List<Widget> myWidgets) {
+        myWidgets = myWidgets.stream().sorted(Comparator.comparing(Widget::getColor)).collect(Collectors.toList());
+        for (Widget widget: myWidgets)
+            System.out.println(widget.toString());
+    }
+    public static void sortByProductionDate(List<Widget> myWidgets) {
+        myWidgets = myWidgets.stream().sorted(Comparator.comparing(Widget::getProductionDate)).collect(Collectors.toList());
+        for (Widget widget: myWidgets)
+            System.out.println(widget.toString());
     }
 }
